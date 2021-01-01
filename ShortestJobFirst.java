@@ -74,8 +74,7 @@ public class ShortestJobFirst {
             process[i].executionTimeTEMP--;
             totalExecutionTime--; //if context switch happened, then: time+=contextTime;
             time = contextProcess[0]!=null &&
-                    contextProcess[0].processName != contextProcess[1].processName ||
-                                                    process[i].executionTimeTEMP == 0? (time + contextTime + 1) : (time + 1);
+                    contextProcess[0].processName != contextProcess[1].processName? (time + contextTime + 1) : (time + 1);
             calculateTurnaroundTime(process[i], time);
             contextProcess[0] = process[i]; //Current process will be previous process in the next loop
         }
