@@ -3,7 +3,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
 
-public class Priority {
+public class Priority implements IScheduler {
 	private ArrayList<Process> processes = new ArrayList<Process>();
 	private ArrayList<Process> completed = new ArrayList<Process>();
 	private ArrayList<Process> sequence = new ArrayList<Process>();
@@ -29,6 +29,7 @@ public class Priority {
 	    }
 	};
 	
+	@Override
 	public void schedule()
 	{
 		System.out.println("Enter the number of processes: ");
