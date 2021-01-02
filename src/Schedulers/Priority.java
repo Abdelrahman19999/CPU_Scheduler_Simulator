@@ -71,6 +71,7 @@ public class Priority implements IScheduler {
 					if(p.priority < executing.priority)
 					{
 						executing.waitingTime++;
+						if(executing.waitingTime % 5 == 0) executing.priority--; // Solving starvation problem
 						executing = p;
 						index = i;
 					}
