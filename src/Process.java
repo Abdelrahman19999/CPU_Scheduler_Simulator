@@ -1,33 +1,25 @@
-public class Process {
+public class Process {    
+    private int arrivalTime;
+    private int burstTime;
+    protected String processName;
+    protected int waitingTime;
+    protected int turnaroundTime;
+    protected int executionTimeTEMP; //Used for operations instead of burst time; Like decrementing and incrementing
+    protected int priority;
+    
+    Process() {};
+    Process(int arrivalTime, int burstTime, String processName){
+        this.arrivalTime = arrivalTime;
+        this.burstTime = burstTime;
+        this.processName = processName;
+        executionTimeTEMP = burstTime;
+    }
 
-	 double Arrival_Time , Burst_Time , Current_Burst_Time=0 , Waiting_Time  , Turnaround_Time ;
-
-	   boolean Done ;
-
-	   String Name ;
-
-	   Process(String name , double Arrive , double Burst){
-
-	       Arrival_Time = Arrive ;
-
-	       Burst_Time   = Burst ;
-
-	       Name         = name ;
-
-	       Done         = false ;
-	    }
-
-	   void Set_Waiting_Time(double Time){
-
-	       Waiting_Time=Time ;
-
-	   }
-
-	   void Set_Turnaround_Time(double Time){
-
-	       Turnaround_Time=Time ;
-
-	   }
-
-	
+    void resetExecutionTimeTEMP(){executionTimeTEMP = burstTime;}
+    int getBurstTime(){
+        return this.burstTime;
+    }
+    int getArrivalTime(){
+        return this.arrivalTime;
+    }
 }
