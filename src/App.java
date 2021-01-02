@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import Schedulers.IScheduler;
+import Schedulers.Priority;
 
 public class App {
 

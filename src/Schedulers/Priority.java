@@ -1,7 +1,10 @@
+package Schedulers;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
+import Process.Process;
 
 public class Priority implements IScheduler {
 	private ArrayList<Process> processes = new ArrayList<Process>();
@@ -54,6 +57,7 @@ public class Priority implements IScheduler {
 		Collections.sort(processes, comparator);
 		
 		int time = 0;
+		int initial_time = processes.get(0).getArrivalTime();
 
 		do
 		{
@@ -94,7 +98,7 @@ public class Priority implements IScheduler {
 		System.out.println("Process Name         Time");
 		for(int i = 0; i < sequence.size(); i++)
 		{
-			System.out.println(sequence.get(i).processName + "                    " + (i));
+			System.out.println(sequence.get(i).processName + "                    " + (initial_time+i));
 		}
 		System.out.println("\n\nWaiting Times and Turnaround Times: ");
 		for(int i = 0; i < completed.size(); i++)

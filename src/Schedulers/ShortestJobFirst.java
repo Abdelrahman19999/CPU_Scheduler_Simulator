@@ -1,6 +1,7 @@
+package Schedulers;
 
 import java.util.Scanner;
-
+import Process.Process;
 
 public class ShortestJobFirst {
     void calculateWaitingTime(Process process){
