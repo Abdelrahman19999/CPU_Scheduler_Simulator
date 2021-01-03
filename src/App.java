@@ -3,6 +3,7 @@ import java.util.Scanner;
 import Schedulers.FirstComeFirstServed;
 import Schedulers.IScheduler;
 import Schedulers.Priority;
+import Schedulers.Round_Robin;
 
 public class App {
 
@@ -19,6 +20,14 @@ public class App {
 		
 		switch(choice)
 		{
+		
+		    case 2:
+		    	
+		    	s = new Round_Robin() ;
+		    	s.schedule();
+		    	
+		    	break;
+		
 			case 3:
 				s = new Priority();
 				s.schedule();
