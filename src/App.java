@@ -1,14 +1,3 @@
-<<<<<<< Updated upstream
-public class App {
-
-	public static void main(String[] args) {
-		Priority p = new Priority();
-		p.schedule();
-
-	}
-
-}
-=======
 import java.util.Scanner;
 
 import Schedulers.FirstComeFirstServed;
@@ -54,4 +43,3 @@ public class App {
 	}
 
 }
->>>>>>> Stashed changes
