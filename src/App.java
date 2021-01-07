@@ -21,10 +21,10 @@ public class App {
 		
 		switch(choice)
 		{
-                    case 1:
-                        s = new ShortestJobFirst();
-                        s.schedule();
-                        break;
+			case 1:
+				s = new ShortestJobFirst();
+				s.schedule();
+				break;
 		
 		    case 2:
 		    	
@@ -41,9 +41,7 @@ public class App {
 			default:
 				break;
 		}
-		
 		scn.close();
-
 
 	}
 
