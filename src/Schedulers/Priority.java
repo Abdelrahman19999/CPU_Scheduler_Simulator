@@ -83,32 +83,37 @@ public class Priority implements IScheduler {
 				}
 				else break;
 			}
-			sequence.add(executing);
-			executing.executionTimeTEMP--;
-			if(executing.executionTimeTEMP == 0) 
+			if(time >= executing.getArrivalTime())
 			{
-				completed.add(processes.get(index));
-				processes.remove(index);
-				pCount--;
+				sequence.add(executing);
+				executing.executionTimeTEMP--;
+				if(executing.executionTimeTEMP == 0) 
+				{
+					completed.add(processes.get(index));
+					processes.remove(index);
+					pCount--;
+				}
 			}
 			time++;
 		}
 		while(pCount > 0);
 		
-		System.out.println("\nExecution Timeline: ");
-		System.out.println("Process Name         Time");
+		System.out.println("\nExecution Timeline:\n");
 		for(int i = 0; i < sequence.size(); i++)
 		{
-			System.out.println(sequence.get(i).processName + "                    " + (initial_time+i));
+			System.out.println("Process: " + sequence.get(i).processName + " ||| Time: " + (initial_time+i));
+            System.out.println("-------------------------------------");
 		}
-		System.out.println("\n\nWaiting Times and Turnaround Times: ");
+		System.out.println("\n\nWaiting Times and Turnaround Times:");
 		for(int i = 0; i < completed.size(); i++)
 		{
 			int wTime = completed.get(i).waitingTime;
 			int taTime = wTime + completed.get(i).getBurstTime();
 			cummWait += wTime;
 			cummTurn += taTime;
-			System.out.println(completed.get(i).processName + "               " + wTime + "               " + taTime);
+			System.out.println("\nProcess " + completed.get(i).processName + " stats: ");
+            System.out.println("Waiting time: " + wTime);
+            System.out.println("Turnaround time: " + taTime);
 		}
 		
 		System.out.println("\n\nAverage waiting time: ");
