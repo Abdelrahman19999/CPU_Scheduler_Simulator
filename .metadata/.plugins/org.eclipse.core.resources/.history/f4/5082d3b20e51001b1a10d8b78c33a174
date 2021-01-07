@@ -77,30 +77,22 @@ public class Round_Robin implements IScheduler{
  public void Run_Processes(){
 
     boolean Finish = false ;
-    
-    int tmp = -1 ;
 
     while(!Finish){
 
      Finish = true;
 
-     if(tmp==Time)Time++;
-
-     tmp = Time;
-     
      for(int i=0;i<Number_Of_Processes;i++){
 
         if(!process.get(i).Done){
 
-        	if(process.get(i).getArrivalTime()>Time){Finish=false; break;}
-        	
             order.add(process.get(i).processName);
 
             Finish = false;
 
             if(Time!=0)Time+=Context_Time;
 
-            
+            if(process.get(i).getArrivalTime()>Time)Time=process.get(i).getArrivalTime();
 
             if(process.get(i).Current_Burst_Time<process.get(i).getBurstTime()){
 
