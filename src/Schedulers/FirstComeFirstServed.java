@@ -3,6 +3,8 @@ import java.util.Scanner;
 import Process.Process;
 
 public class FirstComeFirstServed implements IScheduler {
+	private Scanner sc;
+	
     void calculateWaitingTime(Process process){
         process.waitingTime = process.turnaroundTime - process.getBurstTime();
     }
@@ -39,7 +41,7 @@ public class FirstComeFirstServed implements IScheduler {
     }
     public void schedule(){
     	System.out.println("Enter the number of processes: ");
-    	Scanner sc=new Scanner(System.in);
+    	sc=new Scanner(System.in);
 		int pCount = sc.nextInt();
 		sc.nextLine();
     	Process[] process = new Process[pCount];

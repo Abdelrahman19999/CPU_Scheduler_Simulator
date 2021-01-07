@@ -4,6 +4,7 @@ import Schedulers.FirstComeFirstServed;
 import Schedulers.IScheduler;
 import Schedulers.Priority;
 import Schedulers.Round_Robin;
+import Schedulers.ShortestJobFirst;
 
 public class App {
 
@@ -20,6 +21,10 @@ public class App {
 		
 		switch(choice)
 		{
+                    case 1:
+                        s = new ShortestJobFirst();
+                        s.schedule();
+                        break;
 		
 		    case 2:
 		    	

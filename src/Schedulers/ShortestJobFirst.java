@@ -3,17 +3,12 @@ package Schedulers;
 import java.util.Scanner;
 import Process.Process;
 
-public class ShortestJobFirst {
+public class ShortestJobFirst implements IScheduler{
+	
+	private Scanner sc;
     void calculateWaitingTime(Process process){
         process.waitingTime = process.turnaroundTime - process.getBurstTime();
     }
-    /*
-    void calculateWaitingTime(Process process, int startTime){
-        if (process.state == true){
-            process.waitingTime = startTime - process.arrivalTime;
-        }
-        process.state = false;
-    }*/
     void calculateTurnaroundTime(Process process, int time){
         if (process.executionTimeTEMP <= 0){
         process.turnaroundTime = time - process.getArrivalTime();
@@ -45,7 +40,27 @@ public class ShortestJobFirst {
         return totalExecutionTime;
     }
     //Preemptive scheduling
-    void scheduleSFJ(Process[] process, int contextTime){
+//    void schedule(Process[] process, int contextTime){
+    public void schedule(){
+        System.out.println("Enter the number of processes: ");
+    	sc=new Scanner(System.in);
+	int pCount = sc.nextInt();
+        sc.nextLine();
+    	Process[] process = new Process[pCount];
+    	for(int i = 0; i < pCount; i++)
+		{
+			System.out.println("Enter process " + (i+1) + "'s name: ");
+			String pName = sc.nextLine();
+			System.out.println("Enter process " + (i+1) + "'s arrival time: ");
+			int pArrivalTime = sc.nextInt();
+			System.out.println("Enter process " + (i+1) + "'s burst time: ");
+			int pBurstTime = sc.nextInt();
+			sc.nextLine();
+			process[i] = new Process(pArrivalTime, pBurstTime, pName);		
+		}
+        System.out.println("Enter context time: ");
+        int contextTime = sc.nextInt();
+        sc.nextLine();
         int time = 0;
         int totalExecutionTime = calculateTotalExecutionTime(process);
         Process[] contextProcess = new Process[2];
@@ -54,7 +69,6 @@ public class ShortestJobFirst {
             if (process[i].getArrivalTime() > time){continue;}
             if (process[i].executionTimeTEMP <= 0){continue;}
             for (int j = 0; j < process.length; j++){
-//                System.out.println("I: " + i + " J: " + j);
                  if (process[j].executionTimeTEMP <= 0){continue;}
                  if (process[i].getArrivalTime() <= time && process[j].getArrivalTime() > time){ //Case 1
                     continue;
@@ -62,54 +76,25 @@ public class ShortestJobFirst {
                         then we compare their execution time */
                 else if (process[i].getArrivalTime() <= time && process[j].getArrivalTime() <= time){
                     if (process[i].executionTimeTEMP <= process[j].executionTimeTEMP){
-                        continue;
+                        if (i <= j){continue;}else{i=j;}
                     }else{
                         i = j;
                     }
                 }
             }
-//            calculateWaitingTime(process[i], time);
             contextProcess[1] = process[i]; //Saving our Current process
             System.out.println("Process: " + process[i].processName + " ||| Time: " + time);
             System.out.println("-------------------------------------");
             process[i].executionTimeTEMP--;
-            totalExecutionTime--; //if context switch happened, then: time+=contextTime;
+            totalExecutionTime--; //if context switch happened, then: time+=contextTime+1;
             time = contextProcess[0]!=null &&
-                    contextProcess[0].processName != contextProcess[1].processName? (time + contextTime + 1) : (time + 1);
+                    contextProcess[0].processName != contextProcess[1].processName &&
+                        !(contextProcess[0].executionTimeTEMP <=0) ||
+                            process[i].executionTimeTEMP<=0 ? (time + contextTime + 1) : (time + 1);
             calculateTurnaroundTime(process[i], time);
             contextProcess[0] = process[i]; //Current process will be previous process in the next loop
         }
-    }
-    public static void main(String[] args){
-//        Scanner scan = new Scanner(System.in);
-//        int contextTime = scan.nextInt();
-//        Process[] process = new Process[5];
-//        for (int i=0 ; i < 5; i++){
-//            process[i] = new Process();
-//            String processName = scan.next();
-//            process[i].processName = processName;
-//            int arrivalTime = scan.nextInt();
-//            process[i].arrivalTime = arrivalTime;
-//            int executionTime = scan.nextInt();
-//            process[i].executionTime = executionTime;
-//        }
-        int contextTime = 0; 
-        Process[] process = new Process[7];
-        process[0] = new Process(0,1,"P1");
-        process[1] = new Process(1,7,"P2");
-        process[2] = new Process(2,3,"P3");
-        process[3] = new Process(3,6,"P4");
-        process[4] = new Process(4,5,"P5");
-        process[5] = new Process(5,15,"P6");
-        process[6] = new Process(15,8,"P7");
-//          process[0] = new Process(0,4, "P1");
-//          process[1] = new Process(1,8, "P2");
-//          process[2] = new Process(3,2, "P3");
-//          process[3] = new Process(10, 12, "P4");
-//          process[4] = new Process(12, 5, "P5");
-        ShortestJobFirst sfj = new ShortestJobFirst();
-        sfj.scheduleSFJ(process, contextTime);
-        for (int i=0; i < process.length; i++){
+        for (int i = 0; i < process.length; i++){
             System.out.println("Process " + process[i].processName + " stats: ");
             System.out.println("Waiting time: " + process[i].waitingTime);
             System.out.println("Turnaround time: " + process[i].turnaroundTime);
