@@ -1,5 +1,9 @@
 package Schedulers;
+import java.io.* ; 
+import java.util.*; 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 import Process.Process;
 
@@ -164,10 +168,31 @@ public class Round_Robin implements IScheduler{
 
   }
  
+ public void swap(int i , int j) {
+	 
+		Collections.swap(process, i, j);
+		 
+	}
+ 
+ public void Sorting_Processes(){
+
+	   for(int  i =0; i<Number_Of_Processes ; i++)
+	    for(int j=0;j<Number_Of_Processes;j++){
+	    	Process x = process.get(i);
+	    	Process y = process.get(j);
+	     if(y.getArrivalTime()>x.getArrivalTime())swap(i,j);
+	     if(y.getArrivalTime()==x.getArrivalTime()){
+	        if(y.getBurstTime()>x.getBurstTime())swap(i,j);
+	     }
+	    }
+	  
+	   
+	 }
  
  public void schedule() {
     
-	 Add_Processes();
+     Add_Processes();	 
+     Sorting_Processes();
      Run_Processes();
      Calculate_AVG();
      View_WorkDone();
