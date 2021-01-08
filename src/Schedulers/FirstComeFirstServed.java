@@ -76,9 +76,6 @@ public class FirstComeFirstServed implements IScheduler {
         	int exect=process[i].getBurstTime();
         	while (process[i].getArrivalTime()>j)
         	{
-        		System.out.println("Time:"+time+"     "+"Arrival Time:"+process[i].getArrivalTime());
-        		System.out.println("Process: NULL ||| Time: " + time);
-                System.out.println("-------------------------------------");
                 j++;
                 time = (time + 1);
         	}
