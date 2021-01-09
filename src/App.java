@@ -1,6 +1,5 @@
 import java.util.Scanner;
 
-import Schedulers.FirstComeFirstServed;
 import Schedulers.IScheduler;
 import Schedulers.Multi_Scheduler;
 import Schedulers.Priority;

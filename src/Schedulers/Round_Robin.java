@@ -14,8 +14,6 @@ public class Round_Robin implements IScheduler {
 	ArrayList<Process> process;
 
 	ArrayList<String> order;
-	
-	ArrayList<Integer>time;
 
 	int Time = 0, Number_Of_Processes;
 
@@ -26,8 +24,6 @@ public class Round_Robin implements IScheduler {
 		process = new ArrayList<Process>();
 
 		order = new ArrayList<String>();
-		
-		time = new  ArrayList<>() ;
 
 		System.out.println("Enter Number Of Processes");
 
@@ -75,31 +71,30 @@ public class Round_Robin implements IScheduler {
 	public void Run_Processes() {
 
 		boolean Finish = false;
-		
-		int tmp = -1;
 
+		int tmp = -1 ;
+		
 		while (!Finish) {
 
 			Finish = true;
-			
+           
 			if(tmp==Time)Time++;
 			
-			tmp = Time ;
-
+			tmp=Time;
+			
 			for (int i = 0; i < Number_Of_Processes; i++) {
 
 				if (!process.get(i).Done) {
 
-					if (process.get(i).getArrivalTime() > Time) {Finish=false; continue;}
-					
-					order.add(process.get(i).processName);
-					
-					time.add(Time);
-					
 					Finish = false;
 
-					if (Time != 0)Time += Context_Time;
-											   
+					if (Time != 0)
+						Time += Context_Time;
+
+					if (process.get(i).getArrivalTime() > Time) {Finish= false; continue ;}
+						
+					order.add(process.get(i).processName);
+
 					if (process.get(i).Current_Burst_Time < process.get(i).getBurstTime()) {
 
 						if (process.get(i).getBurstTime() - process.get(i).Current_Burst_Time > Quantum) {
@@ -131,7 +126,6 @@ public class Round_Robin implements IScheduler {
 
 		}
 
-	  time.add(Time);
 	}
 
 	public void View_WorkDone() {
@@ -154,13 +148,6 @@ public class Round_Robin implements IScheduler {
 			System.out.print(e + "  ");
 
 		System.out.println();
-		
-		
-		for (int e : time)
-			System.out.print(e + "   ");
-
-		System.out.println();
-		
 	}
 
 	public void Calculate_AVG() {
@@ -193,8 +180,12 @@ public class Round_Robin implements IScheduler {
 			for (int j = 0; j < Number_Of_Processes; j++) {
 				Process x = process.get(i);
 				Process y = process.get(j);
-				if (x.getArrivalTime() < y.getArrivalTime())swap(i, j);
-				
+				if (y.getArrivalTime() > x.getArrivalTime())
+					swap(i, j);
+				if (y.getArrivalTime() == x.getArrivalTime()) {
+					if (y.getBurstTime() > x.getBurstTime())
+						swap(i, j);
+				}
 			}
 
 	}

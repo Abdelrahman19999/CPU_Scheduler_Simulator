@@ -5,225 +5,209 @@ import java.util.Collections;
 import java.util.Scanner;
 
 import Process.Process;
-import Process.Process;
 
-public class Multi_Scheduler implements IScheduler{
-   
-    ArrayList<Process>RR ;
-	
-	ArrayList<Process>FCFS ;
-	
-	ArrayList<Integer>time;
-	
-	int Quantum , Context_Time ;
-    
-    Scanner input= new Scanner(System.in);
-    
-    int Time = 0 , Number_Of_Processes ;
-	
-    double AVG_Turnarround_Time=0, AVG_Waiting_Time=0 ;
-    
-    ArrayList<String>order ;
-    
-    
-    
-    
-	
+public class Multi_Scheduler implements IScheduler {
+
+	ArrayList<Process> RR;
+
+	ArrayList<Process> FCFS;
+
+	ArrayList<Integer> time;
+
+	int Quantum, Context_Time;
+
+	Scanner input = new Scanner(System.in);
+
+	int Time = 0, Number_Of_Processes;
+
+	double AVG_Turnarround_Time = 0, AVG_Waiting_Time = 0;
+
+	ArrayList<String> order;
+
 	public void schedule() {
-		
-		int tmp = -1 ;
-		
+
+		int tmp = -1;
+
 		Add_Processes();
-		
-		//Sorting_RR();
-		
+
+		// Sorting_RR();
+
 		Sorting_FCFS();
-		
-		
-		while(Check_RR())Run_RR();
-		
-		
-		  while(!Finish_FCFS()){
-		    	
-			  Run_FCFS();
-			  
-		      if(Time==tmp)Time++;	
+
+		while (Check_RR())
+			Run_RR();
+
+		while (!Finish_FCFS() || !Finish_RR()) {
+
 			
-		      tmp=Time; 
-			  
-		     
-		 }	
-		
-	 time.add(Time);
-		  
-	 Calculate_AVG();	  
-		  
-	 View_WorkDone();	
-	 	
-		
+			if(Check_RR())Run_RR();
+			else Run_FCFS();
+            
+			if (Time == tmp)
+				Time++;
+
+			tmp = Time;
+
+		}
+
+		time.add(Time);
+
+		Calculate_AVG();
+
+		View_WorkDone();
+
 	}
-   
-	
-    
-    public void Add_Processes(){
-        
-    	int Queue_Number ;
-    	
-       RR = new ArrayList<Process>() ;
-       
-       FCFS = new ArrayList<Process>() ;
-		
-	   order = new ArrayList<String>() ;
-	   
-	   time = new  ArrayList<>() ;
-   		
-        System.out.println("Enter Number Of Processes");
-        
-        Number_Of_Processes = input.nextInt() ;
 
-       
-        System.out.println("Enter Quantum Time");
+	public void Add_Processes() {
 
-        Quantum=input.nextInt() ;
+		int Queue_Number;
 
-        System.out.println("Enter Context Time"); 
+		RR = new ArrayList<Process>();
 
-        Context_Time=input.nextInt() ; ;
+		FCFS = new ArrayList<Process>();
 
-        for(int i=1;i<=Number_Of_Processes;i++){
+		order = new ArrayList<String>();
 
-             String name;
+		time = new ArrayList<>();
 
-             int arrive,burst;
+		System.out.println("Enter Number Of Processes");
 
-             System.out.println("Enter Process " + i) ;
+		Number_Of_Processes = input.nextInt();
 
-             System.out.print("Name : ") ;
+		System.out.println("Enter Quantum Time");
 
-             name = input.next() ;
+		Quantum = input.nextInt();
 
-             System.out.print("Arrival Time : ") ;
+		System.out.println("Enter Context Time");
 
-             arrive = input.nextInt();
+		Context_Time = input.nextInt();
+		;
 
-             System.out.print("Burst Time : ");
+		for (int i = 1; i <= Number_Of_Processes; i++) {
 
-             burst = input.nextInt();
-             
-             System.out.print("Queue Number : ") ;
+			String name;
 
-             Queue_Number = input.nextInt();
+			int arrive, burst;
 
-             Process p ;
-             
-             p = new Process(arrive , burst , name) ;
-             
-             if(Queue_Number==1)RR.add(p);
-             else FCFS.add(p);
+			System.out.println("Enter Process " + i);
 
-             System.out.println();
-           }
+			System.out.print("Name : ");
 
-      }
-    
-    
-    public void Run_FCFS(){
-         
-    	for(Process e : FCFS) {
-    		
-    		if(!e.Done) {
-    			 
-    			if(e.getArrivalTime() > Time)return;
-    				
-    			    Time += Context_Time ;
-    			    order.add(e.processName);
-    			    time.add(Time);
-    				while(e.Current_Burst_Time < e.getBurstTime() ) {
-    				
-    					e.Current_Burst_Time++;
-    					Time++;	
-    					
-    					boolean yes= false ;
-    					
-    					if(Check_RR())yes=true;
-    					
-    					while(Check_RR())Run_RR();
-    					
-    					if(yes) {
-    					
-    						
-    					order.add(e.processName);
-        			    
-    					time.add(Time);
-    					
-    					Time += Context_Time ;
-    					
-    					yes = false;
-        			    
-    					}
-    					
-    				}
-    				
-    				if(e.Current_Burst_Time==e.getBurstTime()) {
-    					
-    					e.Done=true;
-    				
-    				    e.turnaroundTime = (Time-e.getArrivalTime());
+			name = input.next();
 
-	                    e.waitingTime = (Time-e.getArrivalTime()-e.getBurstTime());
-    				
-    				}
-    				
-    			
-    			
-    		
-    		}
-    		
-    	}
-    	
-    	
-    	
-    }
-    
-    public void Run_RR() {
+			System.out.print("Arrival Time : ");
 
+			arrive = input.nextInt();
 
-			for (int i = 0; i < RR.size(); i++) {
-				
-				if (!RR.get(i).Done) {
-					
-					if (RR.get(i).getArrivalTime() > Time)continue;
+			System.out.print("Burst Time : ");
 
-					order.add(RR.get(i).processName);
-					time.add(Time);
+			burst = input.nextInt();
 
-					if (Time != 0)
+			System.out.print("Queue Number : ");
+
+			Queue_Number = input.nextInt();
+
+			Process p;
+
+			p = new Process(arrive, burst, name);
+
+			if (Queue_Number == 1)
+				RR.add(p);
+			else
+				FCFS.add(p);
+
+			System.out.println();
+		}
+
+	}
+
+	public void Run_FCFS() {
+
+		for (Process e : FCFS) {
+
+			if (!e.Done) {
+
+				if (e.getArrivalTime() > Time)
+					return;
+
+				order.add(e.processName);
+				time.add(Time);
+				if (Time != 0)Time += Context_Time;
+				while (e.Current_Burst_Time < e.getBurstTime()) {
+
+					e.Current_Burst_Time++;
+					Time++;
+
+					boolean yes = false;
+
+					if (Check_RR())
+						yes = true;
+
+					while (Check_RR())
+						Run_RR();
+
+					if (yes) {
+
+						order.add(e.processName);
+
+						time.add(Time);
+
 						Time += Context_Time;
 
+						yes = false;
 
-					if (RR.get(i).Current_Burst_Time < RR.get(i).getBurstTime()) {
+					}
 
-						if (RR.get(i).getBurstTime() - RR.get(i).Current_Burst_Time > Quantum) {
+				}
 
-							RR.get(i).Current_Burst_Time += Quantum;
+				if (e.Current_Burst_Time == e.getBurstTime()) {
 
-							Time += Quantum;
+					e.Done = true;
 
-						} else {
+					e.turnaroundTime = (Time - e.getArrivalTime());
 
-							Time += RR.get(i).getBurstTime() - RR.get(i).Current_Burst_Time;
+					e.waitingTime = (Time - e.getArrivalTime() - e.getBurstTime());
 
-							RR.get(i).Current_Burst_Time += RR.get(i).getBurstTime()
-									- RR.get(i).Current_Burst_Time;
+				}
 
-							RR.get(i).Done = true;
+			}
 
-							RR.get(i).turnaroundTime = (Time - RR.get(i).getArrivalTime());
+		}
 
-							RR.get(i).waitingTime = (Time - RR.get(i).getArrivalTime()
-									- RR.get(i).getBurstTime());
-						}
+	}
 
+	public void Run_RR() {
+
+		for (int i = 0; i < RR.size(); i++) {
+
+			if (!RR.get(i).Done) {
+
+				if (RR.get(i).getArrivalTime() > Time)continue;
+
+				order.add(RR.get(i).processName);
+				time.add(Time);
+
+				if (Time != 0)Time += Context_Time;
+
+				if (RR.get(i).Current_Burst_Time < RR.get(i).getBurstTime()) {
+
+					if (RR.get(i).getBurstTime() - RR.get(i).Current_Burst_Time > Quantum) {
+
+						RR.get(i).Current_Burst_Time += Quantum;
+
+						Time += Quantum;
+
+					} else {
+
+						Time += RR.get(i).getBurstTime() - RR.get(i).Current_Burst_Time;
+
+						RR.get(i).Current_Burst_Time += RR.get(i).getBurstTime() - RR.get(i).Current_Burst_Time;
+
+						RR.get(i).Done = true;
+
+						RR.get(i).turnaroundTime = (Time - RR.get(i).getArrivalTime());
+
+						RR.get(i).waitingTime = (Time - RR.get(i).getArrivalTime() - RR.get(i).getBurstTime());
 					}
 
 				}
@@ -232,58 +216,58 @@ public class Multi_Scheduler implements IScheduler{
 
 		}
 
-	
-    
-    
-   
-    public boolean Finish_FCFS() {
-		
-		for(Process e : FCFS) {
-			if(!e.Done)return false;
-			
+	}
+
+	public boolean Finish_FCFS() {
+
+		for (Process e : FCFS) {
+			if (!e.Done)
+				return false;
+
 		}
 		return true;
 	}
-    
-    public boolean Finish_RR() {
-		
-		for(Process e : RR) {
-			if(!e.Done)return false;
-			
+
+	public boolean Finish_RR() {
+
+		for (Process e : RR) {
+			if (!e.Done)
+				return false;
+
 		}
 		return true;
 	}
-    	
-    
+
 	public boolean Check_RR() {
-		
-		if(Finish_RR())return false;
-		
-		for(Process e : RR) {
-			if(!e.Done && e.getArrivalTime() <= Time )return true;
-			
+
+		if (Finish_RR())
+			return false;
+
+		for (Process e : RR) {
+			if (!e.Done && e.getArrivalTime() <= Time)
+				return true;
+
 		}
 		return false;
 	}
-	
-	
-	
+
 	public void View_WorkDone() {
 
 		for (int i = 0; i < RR.size(); i++) {
 
-			if (i == 0)
-				System.out.println("Name   Turnaround Time     Waiting Time");
+			if (i == 0)System.out.println("Name   Turnaround Time     Waiting Time");
 
-			System.out.println(RR.get(i).processName + "        " + RR.get(i).turnaroundTime
-					+ "                   " + RR.get(i).waitingTime);
+			System.out.println(RR.get(i).processName + "        " + RR.get(i).turnaroundTime + "                   "
+					+ RR.get(i).waitingTime);
 
 		}
+      
+		if (RR.size()==0)System.out.println("Name   Turnaround Time     Waiting Time");
 		
 		for (int i = 0; i < FCFS.size(); i++) {
 
-			System.out.println(FCFS.get(i).processName + "        " + FCFS.get(i).turnaroundTime
-					+ "                   " + FCFS.get(i).waitingTime);
+			System.out.println(FCFS.get(i).processName + "        " + FCFS.get(i).turnaroundTime + "                   "
+					+ FCFS.get(i).waitingTime);
 
 		}
 
@@ -295,41 +279,38 @@ public class Multi_Scheduler implements IScheduler{
 			System.out.print(e + "  ");
 
 		System.out.println();
-		
+
 		for (int e : time)
 			System.out.print(e + "   ");
 
 		System.out.println();
 	}
-	
-	
-	
+
 	public void swap_FCFS(int i, int j) {
 
 		Collections.swap(FCFS, i, j);
 
 	}
-	
-	
+
 	public void swap_RR(int i, int j) {
 
 		Collections.swap(RR, i, j);
 
 	}
-	
+
 	public void Sorting_RR() {
 
 		for (int i = 0; i < RR.size(); i++)
 			for (int j = 0; j < RR.size(); j++) {
 				Process x = RR.get(i);
 				Process y = RR.get(j);
-				if (x.getArrivalTime() < y.getArrivalTime())swap_RR(i, j);
+				if (x.getArrivalTime() < y.getArrivalTime())
+					swap_RR(i, j);
 
 			}
 
 	}
-	
-	
+
 	public void Sorting_FCFS() {
 
 		for (int i = 0; i < FCFS.size(); i++)
@@ -345,15 +326,14 @@ public class Multi_Scheduler implements IScheduler{
 			}
 
 	}
-	
-	
+
 	public void Calculate_AVG() {
 
 		double Sum = 0;
 
 		for (Process e : RR)
 			Sum += e.waitingTime;
-		
+
 		for (Process e : FCFS)
 			Sum += e.waitingTime;
 
@@ -363,15 +343,12 @@ public class Multi_Scheduler implements IScheduler{
 
 		for (Process e : RR)
 			Sum += e.turnaroundTime;
-		
+
 		for (Process e : FCFS)
 			Sum += e.turnaroundTime;
 
 		AVG_Turnarround_Time = Sum / Number_Of_Processes;
 
 	}
-	
-	
-	
 
 }
