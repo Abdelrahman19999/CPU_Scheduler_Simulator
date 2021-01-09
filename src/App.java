@@ -1,7 +1,7 @@
 import java.util.Scanner;
 
-import Schedulers.FirstComeFirstServed;
 import Schedulers.IScheduler;
+import Schedulers.Multi_Scheduler;
 import Schedulers.Priority;
 import Schedulers.Round_Robin;
 import Schedulers.ShortestJobFirst;
@@ -37,6 +37,11 @@ public class App {
 				s = new Priority();
 				s.schedule();
 				break;
+			
+			case 4:
+				s = new Multi_Scheduler();
+				s.schedule();
+				break;	
 				
 			default:
 				break;
