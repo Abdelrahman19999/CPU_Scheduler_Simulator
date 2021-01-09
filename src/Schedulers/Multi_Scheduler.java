@@ -280,10 +280,6 @@ public class Multi_Scheduler implements IScheduler {
 
 		System.out.println();
 
-		for (int e : time)
-			System.out.print(e + "   ");
-
-		System.out.println();
 	}
 
 	public void swap_FCFS(int i, int j) {
