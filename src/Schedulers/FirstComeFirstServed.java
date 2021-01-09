@@ -3,6 +3,8 @@ import java.util.Scanner;
 import Process.Process;
 
 public class FirstComeFirstServed implements IScheduler {
+	private Scanner sc;
+	
     void calculateWaitingTime(Process process){
         process.waitingTime = process.turnaroundTime - process.getBurstTime();
     }
@@ -39,45 +41,50 @@ public class FirstComeFirstServed implements IScheduler {
     }
     public void schedule(){
     	System.out.println("Enter the number of processes: ");
-    	Scanner sc=new Scanner(System.in);
-		int pCount = sc.nextInt();
-		sc.nextLine();
+    	sc=new Scanner(System.in);
+    	int pCount = sc.nextInt();
+    	sc.nextLine();
     	Process[] process = new Process[pCount];
     	for(int i = 0; i < pCount; i++)
-		{
-			System.out.println("Enter process " + (i+1) + "'s name: ");
-			String pName = sc.nextLine();
-			System.out.println("Enter process " + (i+1) + "'s arrival time: ");
-			int pArrivalTime = sc.nextInt();
-			System.out.println("Enter process " + (i+1) + "'s burst time: ");
-			int pBurstTime = sc.nextInt();
-			sc.nextLine();
-			process[i] = new Process(pArrivalTime, pBurstTime, pName);
-			
-		}
+    	{
+    		System.out.println("Enter process " + (i+1) + "'s name: ");
+    		String pName = sc.nextLine();
+    		System.out.println("Enter process " + (i+1) + "'s arrival time: ");
+    		int pArrivalTime = sc.nextInt();
+    		System.out.println("Enter process " + (i+1) + "'s burst time: ");
+    		int pBurstTime = sc.nextInt();
+    		sc.nextLine();
+    		process[i] = new Process(pArrivalTime, pBurstTime, pName);
+    		
+    	}
 
-        int time = 0;
+        int time = 1;
         for (int i=0;i<process.length;i++)
-		{
-			for (int j=0;j<process.length;j++)
-			{
-				if (process[i].getArrivalTime()<process[j].getArrivalTime())
-				{
-					Process temp=process[i];
-					process[i]=process[j];
-					process[j]=temp;
-				}
-			}
-		}
+    	{
+    		for (int j=0;j<process.length;j++)
+    		{
+    			if (process[i].getArrivalTime()<process[j].getArrivalTime())
+    			{
+    				Process temp=process[i];
+    				process[i]=process[j];
+    				process[j]=temp;
+    			}
+    		}
+    	}
         int totalExecutionTime = calculateTotalExecutionTime(process);
-        for ( int i = 0; totalExecutionTime > 0 && i < process.length; i++){
+        for ( int i = 0,j = 1; j < totalExecutionTime && i < process.length; i++){
         	int exect=process[i].getBurstTime();
+        	while (process[i].getArrivalTime()>j)
+        	{
+                j++;
+                time = (time + 1);
+        	}
         	while (exect>0)
         	{
         		System.out.println("Process: " + process[i].processName + " ||| Time: " + time);
                 System.out.println("-------------------------------------");
                 process[i].executionTimeTEMP--;
-                totalExecutionTime--; //if context switch happened, then: time+=contextTime;
+                j++; //if context switch happened, then: time+=contextTime;
                 time = (time + 1);
                 calculateTurnaroundTime(process[i], time);
                 exect--;

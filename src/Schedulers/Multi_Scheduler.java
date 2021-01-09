@@ -1,6 +1,7 @@
 package Schedulers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 import Process.Process;
@@ -8,11 +9,11 @@ import Process.Process;
 
 public class Multi_Scheduler implements IScheduler{
    
-	public void schedule() {}
-   
-	ArrayList<Process>RR ;
+    ArrayList<Process>RR ;
 	
 	ArrayList<Process>FCFS ;
+	
+	ArrayList<Integer>time;
 	
 	int Quantum , Context_Time ;
     
@@ -24,15 +25,57 @@ public class Multi_Scheduler implements IScheduler{
     
     ArrayList<String>order ;
     
+    
+    
+    
+	
+	public void schedule() {
+		
+		int tmp = -1 ;
+		
+		Add_Processes();
+		
+		//Sorting_RR();
+		
+		Sorting_FCFS();
+		
+		
+		while(Check_RR())Run_RR();
+		
+		
+		  while(!Finish_FCFS()){
+		    	
+			  Run_FCFS();
+			  
+		      if(Time==tmp)Time++;	
+			
+		      tmp=Time; 
+			  
+		     
+		 }	
+		
+	 time.add(Time);
+		  
+	 Calculate_AVG();	  
+		  
+	 View_WorkDone();	
+	 	
+		
+	}
+   
+	
+    
     public void Add_Processes(){
         
-    	int q_number ;
+    	int Queue_Number ;
     	
        RR = new ArrayList<Process>() ;
        
        FCFS = new ArrayList<Process>() ;
 		
-	  order = new ArrayList<String>() ;
+	   order = new ArrayList<String>() ;
+	   
+	   time = new  ArrayList<>() ;
    		
         System.out.println("Enter Number Of Processes");
         
@@ -69,83 +112,265 @@ public class Multi_Scheduler implements IScheduler{
              
              System.out.print("Queue Number : ") ;
 
-             q_number = input.nextInt();
+             Queue_Number = input.nextInt();
 
              Process p ;
              
              p = new Process(arrive , burst , name) ;
              
-             if(q_number==1)RR.add(p);
+             if(Queue_Number==1)RR.add(p);
              else FCFS.add(p);
 
              System.out.println();
            }
 
-       }
+      }
+    
+    
+    public void Run_FCFS(){
+         
+    	for(Process e : FCFS) {
+    		
+    		if(!e.Done) {
+    			 
+    			if(e.getArrivalTime() > Time)return;
+    				
+    			    Time += Context_Time ;
+    			    order.add(e.processName);
+    			    time.add(Time);
+    				while(e.Current_Burst_Time < e.getBurstTime() ) {
+    				
+    					e.Current_Burst_Time++;
+    					Time++;	
+    					
+    					boolean yes= false ;
+    					
+    					if(Check_RR())yes=true;
+    					
+    					while(Check_RR())Run_RR();
+    					
+    					if(yes) {
+    					
+    						
+    					order.add(e.processName);
+        			    
+    					time.add(Time);
+    					
+    					Time += Context_Time ;
+    					
+    					yes = false;
+        			    
+    					}
+    					
+    				}
+    				
+    				if(e.Current_Burst_Time==e.getBurstTime()) {
+    					
+    					e.Done=true;
+    				
+    				    e.turnaroundTime = (Time-e.getArrivalTime());
+
+	                    e.waitingTime = (Time-e.getArrivalTime()-e.getBurstTime());
+    				
+    				}
+    				
+    			
+    			
+    		
+    		}
+    		
+    	}
+    	
+    	
+    	
+    }
+    
+    public void Run_RR() {
+
+
+			for (int i = 0; i < RR.size(); i++) {
+				
+				if (!RR.get(i).Done) {
+					
+					if (RR.get(i).getArrivalTime() > Time)continue;
+
+					order.add(RR.get(i).processName);
+					time.add(Time);
+
+					if (Time != 0)
+						Time += Context_Time;
+
+
+					if (RR.get(i).Current_Burst_Time < RR.get(i).getBurstTime()) {
+
+						if (RR.get(i).getBurstTime() - RR.get(i).Current_Burst_Time > Quantum) {
+
+							RR.get(i).Current_Burst_Time += Quantum;
+
+							Time += Quantum;
+
+						} else {
+
+							Time += RR.get(i).getBurstTime() - RR.get(i).Current_Burst_Time;
+
+							RR.get(i).Current_Burst_Time += RR.get(i).getBurstTime()
+									- RR.get(i).Current_Burst_Time;
+
+							RR.get(i).Done = true;
+
+							RR.get(i).turnaroundTime = (Time - RR.get(i).getArrivalTime());
+
+							RR.get(i).waitingTime = (Time - RR.get(i).getArrivalTime()
+									- RR.get(i).getBurstTime());
+						}
+
+					}
+
+				}
+
+			}
+
+		}
+
 	
-	public void Run_RR(){
-
+    
+    
+   
+    public boolean Finish_FCFS() {
 		
-	    boolean Finish = false ;
-	    
-	    int tmp = -1 ;
+		for(Process e : FCFS) {
+			if(!e.Done)return false;
+			
+		}
+		return true;
+	}
+    
+    public boolean Finish_RR() {
+		
+		for(Process e : RR) {
+			if(!e.Done)return false;
+			
+		}
+		return true;
+	}
+    	
+    
+	public boolean Check_RR() {
+		
+		if(Finish_RR())return false;
+		
+		for(Process e : RR) {
+			if(!e.Done && e.getArrivalTime() <= Time )return true;
+			
+		}
+		return false;
+	}
+	
+	
+	
+	public void View_WorkDone() {
 
-	    while(!Finish){
+		for (int i = 0; i < RR.size(); i++) {
 
-	     Finish = true;
+			if (i == 0)
+				System.out.println("Name   Turnaround Time     Waiting Time");
 
-	     if(tmp==Time)Time++;
+			System.out.println(RR.get(i).processName + "        " + RR.get(i).turnaroundTime
+					+ "                   " + RR.get(i).waitingTime);
 
-	     tmp = Time;
-	     
-	     for(int i=0;i<Number_Of_Processes;i++){
+		}
+		
+		for (int i = 0; i < FCFS.size(); i++) {
 
-	        if(!RR.get(i).Done){
+			System.out.println(FCFS.get(i).processName + "        " + FCFS.get(i).turnaroundTime
+					+ "                   " + FCFS.get(i).waitingTime);
 
-	        	if(RR.get(i).getArrivalTime()>Time){Finish=false; break;}
-	        	
-	            order.add(RR.get(i).processName);
+		}
 
-	            Finish = false;
+		System.out.println("AVG :     " + AVG_Turnarround_Time + "                 " + AVG_Waiting_Time);
 
-	            if(Time!=0)Time+=Context_Time;
+		System.out.println("\nProcesses Execution Order\n\n");
 
-	            
+		for (String e : order)
+			System.out.print(e + "  ");
 
-	            if(RR.get(i).Current_Burst_Time<RR.get(i).getBurstTime()){
+		System.out.println();
+		
+		for (int e : time)
+			System.out.print(e + "   ");
 
-	                 if(RR.get(i).getBurstTime()-RR.get(i).Current_Burst_Time > Quantum){
+		System.out.println();
+	}
+	
+	
+	
+	public void swap_FCFS(int i, int j) {
 
-	                    RR.get(i).Current_Burst_Time+=Quantum;
+		Collections.swap(FCFS, i, j);
 
-	                    Time+=Quantum;
+	}
+	
+	
+	public void swap_RR(int i, int j) {
 
-	                }
-	                 else {
+		Collections.swap(RR, i, j);
 
-	                    Time += RR.get(i).getBurstTime()-RR.get(i).Current_Burst_Time;
+	}
+	
+	public void Sorting_RR() {
 
-	                    RR.get(i).Current_Burst_Time += RR.get(i).getBurstTime()-RR.get(i).Current_Burst_Time;
+		for (int i = 0; i < RR.size(); i++)
+			for (int j = 0; j < RR.size(); j++) {
+				Process x = RR.get(i);
+				Process y = RR.get(j);
+				if (x.getArrivalTime() < y.getArrivalTime())swap_RR(i, j);
 
-	                    RR.get(i).Done=true;
+			}
 
-	                    RR.get(i).turnaroundTime = (Time-RR.get(i).getArrivalTime());
+	}
+	
+	
+	public void Sorting_FCFS() {
 
-	                    RR.get(i).waitingTime = (Time-RR.get(i).getArrivalTime()-RR.get(i).getBurstTime());
-	                 }
+		for (int i = 0; i < FCFS.size(); i++)
+			for (int j = 0; j < FCFS.size(); j++) {
+				Process x = FCFS.get(i);
+				Process y = FCFS.get(j);
+				if (y.getArrivalTime() > x.getArrivalTime())
+					swap_FCFS(i, j);
+				if (y.getArrivalTime() == x.getArrivalTime()) {
+					if (y.getBurstTime() > x.getBurstTime())
+						swap_FCFS(i, j);
+				}
+			}
 
-	              }
+	}
+	
+	
+	public void Calculate_AVG() {
 
-	          }
+		double Sum = 0;
 
+		for (Process e : RR)
+			Sum += e.waitingTime;
+		
+		for (Process e : FCFS)
+			Sum += e.waitingTime;
 
-	     }
+		AVG_Waiting_Time = Sum / Number_Of_Processes;
 
-	   }
-	 
-	    
-	    
-	 }
+		Sum = 0;
+
+		for (Process e : RR)
+			Sum += e.turnaroundTime;
+		
+		for (Process e : FCFS)
+			Sum += e.turnaroundTime;
+
+		AVG_Turnarround_Time = Sum / Number_Of_Processes;
+
+	}
+	
 	
 	
 
