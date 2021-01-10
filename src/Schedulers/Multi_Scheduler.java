@@ -23,6 +23,8 @@ public class Multi_Scheduler implements IScheduler {
 	double AVG_Turnarround_Time = 0, AVG_Waiting_Time = 0;
 
 	ArrayList<String> order;
+	
+	boolean context = false;
 
 	public void schedule() {
 
@@ -132,7 +134,8 @@ public class Multi_Scheduler implements IScheduler {
 
 				order.add(e.processName);
 				time.add(Time);
-				if (Time != 0)Time += Context_Time;
+				if (context)Time += Context_Time;
+				context=true;
 				while (e.Current_Burst_Time < e.getBurstTime()) {
 
 					e.Current_Burst_Time++;
@@ -187,7 +190,8 @@ public class Multi_Scheduler implements IScheduler {
 				order.add(RR.get(i).processName);
 				time.add(Time);
 
-				if (Time != 0)Time += Context_Time;
+				if (context)Time += Context_Time;
+				context=true;
 
 				if (RR.get(i).Current_Burst_Time < RR.get(i).getBurstTime()) {
 
