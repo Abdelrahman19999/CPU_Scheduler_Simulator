@@ -71,25 +71,34 @@ public class Round_Robin implements IScheduler {
 	public void Run_Processes() {
 
 		boolean Finish = false;
+		
+		boolean context = false;
 
+		int tmp = -1 ;
+		
 		while (!Finish) {
 
 			Finish = true;
-
+           
+			if(tmp==Time)Time++;
+				
+			tmp=Time;
+			
+		
 			for (int i = 0; i < Number_Of_Processes; i++) {
 
 				if (!process.get(i).Done) {
 
-					order.add(process.get(i).processName);
-
+					if (process.get(i).getArrivalTime() > Time) {Finish= false; continue ;}
+					
 					Finish = false;
 
-					if (Time != 0)
-						Time += Context_Time;
-
-					if (process.get(i).getArrivalTime() > Time)
-						Time = process.get(i).getArrivalTime();
-
+					if (context)Time += Context_Time;
+					
+					order.add(process.get(i).processName);
+                     
+					context = true ;
+					
 					if (process.get(i).Current_Burst_Time < process.get(i).getBurstTime()) {
 
 						if (process.get(i).getBurstTime() - process.get(i).Current_Burst_Time > Quantum) {
@@ -163,32 +172,11 @@ public class Round_Robin implements IScheduler {
 
 	}
 
-	public void swap(int i, int j) {
-
-		Collections.swap(process, i, j);
-
-	}
-
-	public void Sorting_Processes() {
-
-		for (int i = 0; i < Number_Of_Processes; i++)
-			for (int j = 0; j < Number_Of_Processes; j++) {
-				Process x = process.get(i);
-				Process y = process.get(j);
-				if (y.getArrivalTime() > x.getArrivalTime())
-					swap(i, j);
-				if (y.getArrivalTime() == x.getArrivalTime()) {
-					if (y.getBurstTime() > x.getBurstTime())
-						swap(i, j);
-				}
-			}
-
-	}
+    
 
 	public void schedule() {
 
 		Add_Processes();
-		Sorting_Processes();
 		Run_Processes();
 		Calculate_AVG();
 		View_WorkDone();

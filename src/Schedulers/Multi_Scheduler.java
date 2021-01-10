@@ -14,7 +14,7 @@ public class Multi_Scheduler implements IScheduler {
 
 	ArrayList<Integer> time;
 
-	int Quantum, Context_Time;
+	int Quantum ;
 
 	Scanner input = new Scanner(System.in);
 
@@ -24,22 +24,24 @@ public class Multi_Scheduler implements IScheduler {
 
 	ArrayList<String> order;
 
+
+
 	public void schedule() {
 
 		int tmp = -1;
 
 		Add_Processes();
 
-		// Sorting_RR();
-
 		Sorting_FCFS();
 
 		while (Check_RR())
 			Run_RR();
 
-		while (!Finish_FCFS()) {
+		while (!Finish_FCFS() || !Finish_RR()) {
 
-			Run_FCFS();
+
+			if(Check_RR())Run_RR();
+			else Run_FCFS();
 
 			if (Time == tmp)
 				Time++;
@@ -76,10 +78,6 @@ public class Multi_Scheduler implements IScheduler {
 
 		Quantum = input.nextInt();
 
-		System.out.println("Enter Context Time");
-
-		Context_Time = input.nextInt();
-		;
 
 		for (int i = 1; i <= Number_Of_Processes; i++) {
 
@@ -128,9 +126,9 @@ public class Multi_Scheduler implements IScheduler {
 				if (e.getArrivalTime() > Time)
 					return;
 
-				Time += Context_Time;
 				order.add(e.processName);
 				time.add(Time);
+
 				while (e.Current_Burst_Time < e.getBurstTime()) {
 
 					e.Current_Burst_Time++;
@@ -149,8 +147,6 @@ public class Multi_Scheduler implements IScheduler {
 						order.add(e.processName);
 
 						time.add(Time);
-
-						Time += Context_Time;
 
 						yes = false;
 
@@ -180,14 +176,11 @@ public class Multi_Scheduler implements IScheduler {
 
 			if (!RR.get(i).Done) {
 
-				if (RR.get(i).getArrivalTime() > Time)
-					continue;
+				if (RR.get(i).getArrivalTime() > Time)continue;
 
 				order.add(RR.get(i).processName);
 				time.add(Time);
 
-				if (Time != 0)
-					Time += Context_Time;
 
 				if (RR.get(i).Current_Burst_Time < RR.get(i).getBurstTime()) {
 
@@ -255,13 +248,14 @@ public class Multi_Scheduler implements IScheduler {
 
 		for (int i = 0; i < RR.size(); i++) {
 
-			if (i == 0)
-				System.out.println("Name   Turnaround Time     Waiting Time");
+			if (i == 0)System.out.println("Name   Turnaround Time     Waiting Time");
 
 			System.out.println(RR.get(i).processName + "        " + RR.get(i).turnaroundTime + "                   "
 					+ RR.get(i).waitingTime);
 
 		}
+
+		if (RR.size()==0)System.out.println("Name   Turnaround Time     Waiting Time");
 
 		for (int i = 0; i < FCFS.size(); i++) {
 
@@ -279,10 +273,6 @@ public class Multi_Scheduler implements IScheduler {
 
 		System.out.println();
 
-		for (int e : time)
-			System.out.print(e + "   ");
-
-		System.out.println();
 	}
 
 	public void swap_FCFS(int i, int j) {
